@@ -6,12 +6,18 @@ Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle con
 class Solution {
     int maxHist(vector<int> &height){
         int area = 0;
-        int last_height = 0, last_width = 0;
-        for(int j = 0; j < height.size(); j++){
-            area = max(max(area, height[j]), (last_width + 1)* min(height[j], last_height));
-            last_height = last_width == 0 ? height[j] : min(last_height, height[j]);
-            last_width = last_height == 0 ? 0 : last_width + 1;
+        height.push_back(0);
+        stack<int> s;
+        int i = 0;
+        while(i < height.size()){
+            if(s.empty() || height[i] >= height[s.top()]){
+                s.push(i++);
+            } else {
+                int j = s.top(); s.pop();
+                area = max(area, height[j] * (s.empty() ? i : i - s.top() - 1));
+            }
         }
+        height.pop_back();
         return area;
     }
 public:
